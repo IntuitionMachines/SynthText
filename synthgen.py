@@ -13,7 +13,7 @@ from PIL import Image
 import numpy as np 
 #import mayavi.mlab as mym
 import matplotlib
-matplotlib.use('Agg')
+# matplotlib.use('Agg')
 import matplotlib.pyplot as plt 
 import os.path as osp
 import scipy.ndimage as sim
@@ -647,7 +647,8 @@ class RendererV3(object):
 
             # process regions: 
             num_txt_regions = len(reg_idx)
-            NUM_REP = 5 # re-use each region three times:
+            #force only one text instance per image
+            NUM_REP = 1 # re-use each region three times:
             reg_range = np.arange(NUM_REP * num_txt_regions) % num_txt_regions
             for idx in reg_range:
                 ireg = reg_idx[idx]

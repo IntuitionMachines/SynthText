@@ -248,7 +248,7 @@ def rot3d(v1,v2):
     v3 = np.cross(v1,v2)
     s = np.linalg.norm(v3)
     c = v1.dot(v2)
-    Vx = ssc(v3)
+    Vx = ssc(v3 + 1e-6) #avoid instabilities when v3=0
     return np.eye(3)+s*Vx+(1-c)*Vx.dot(Vx)
 
 def unrotate2d(pts):

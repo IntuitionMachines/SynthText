@@ -85,6 +85,9 @@ class FontColor(object):
         col1 = self.sample_normal(data_col[:3],data_col[3:6])
         col2 = self.sample_normal(data_col[6:9],data_col[9:12])
 
+        col1 = self.complement(col1)
+        col2 = self.complement(col2)
+
         if nn < self.ncol:
             return (col2, col1)
         else:
@@ -316,12 +319,17 @@ class Colorize(object):
         bg_col = np.mean(np.mean(bg_arr,axis=0),axis=0)
         l_bg = Layer(alpha=255*np.ones_like(text_arr,'uint8'),color=bg_col)
 
-        l_text.alpha = l_text.alpha * np.clip(0.88 + 0.1*np.random.randn(), 0.72, 1.0)
+        # no random alpha map
+        # l_text.alpha = l_text.alpha * np.clip(0.88 + 0.1*np.random.randn(), 0.72, 1.0)
         layers = [l_text]
         blends = []
 
+        #opaque probability (myb)
+        opq = np.random.rand() > 0.3
+
+        #no border or shadow for opaque
         # add border:
-        if np.random.rand() < self.p_border:
+        if np.random.rand() < self.p_border and not opq:
             if min_h <= 15 : bsz = 1
             elif 15 < min_h < 30: bsz = 3
             else: bsz = 5
@@ -331,7 +339,7 @@ class Colorize(object):
             blends.append('normal')
 
         # add shadow:
-        if np.random.rand() < self.p_drop_shadow:
+        if np.random.rand() < self.p_drop_shadow and not opq:
             # shadow gaussian size:
             if min_h <= 15 : bsz = 1
             elif 15 < min_h < 30: bsz = 3
@@ -362,13 +370,19 @@ class Colorize(object):
         l_bg = Layer(alpha=255*np.ones_like(text_arr,'uint8'), color=bg_arr)
         l_out =  blit_images(l_normal.color,l_bg.color.copy())
         
-        # plt.subplot(1,3,1)
-        # plt.imshow(l_normal.color)
-        # plt.subplot(1,3,2)
-        # plt.imshow(l_bg.color)
-        # plt.subplot(1,3,3)
-        # plt.imshow(l_out)
-        # plt.show()
+        '''
+        plt.subplot(1,3,1)
+        plt.imshow(l_normal.color)
+        plt.subplot(1,3,2)
+        plt.imshow(l_bg.color)
+        plt.subplot(1,3,3)
+        plt.imshow(l_out)
+        plt.show()
+        '''
+
+        #if opaque, no poisson blending
+        if opq:
+            l_out = None
         
         if l_out is None:
             # poisson recontruction produced

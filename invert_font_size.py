@@ -32,6 +32,7 @@ for i in xrange(len(FS.fonts)):
 	m,_,_,_ = np.linalg.lstsq(A,h)
 	models[font.name] = m
 	xs.append(h)
+	print(font.name)
 
 with open('font_px2pt.cp','w') as f:
 	cp.dump(models,f)

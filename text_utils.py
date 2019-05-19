@@ -328,7 +328,9 @@ class RenderFont(object):
         """
         #H,W = mask.shape
         H,W = self.robust_HW(mask)
-        f_asp = self.font_state.get_aspect_ratio(font)
+        #decrease the calculated font aspect ratio to allow for more text
+        #as this is a very conservative estimatation
+        f_asp = self.font_state.get_aspect_ratio(font) / 1.5
 
         # find the maximum height in pixels:
         max_font_h = min(0.9*H, (1/f_asp)*W/(self.min_nchar+1))

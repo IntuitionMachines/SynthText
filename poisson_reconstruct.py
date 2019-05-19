@@ -106,8 +106,11 @@ def blit_images(im_top,im_back,scale_grad=1.0,mode='max'):
         [gxs,gys] = get_grads(ims)
         [gxd,gyd] = get_grads(imd)
 
-        gxs *= scale_grad
-        gys *= scale_grad
+        #for source gradient only
+        #also increase their amount to decrease the blending effect
+        gxs *= scale_grad * 3
+        gys *= scale_grad * 3
+        mode = 'src'
 
         gxs_idx = gxs!=0
         gys_idx = gys!=0
